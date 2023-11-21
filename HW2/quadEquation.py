@@ -22,9 +22,12 @@ def improvedQuadEquation(a, b, c):
     print("x2 = ", x2)
 
 def main():
-    quadEquation(0.001, 1000, 0.001)
-    quadEquation2(0.001, 1000, 0.001)
-    improvedQuadEquation(0.001, 1000, 0.001)
+    a = float(input("Enter the a value for the quadratic equation: "))
+    b = float(input("Enter the b value for the quadratic equation: "))
+    c = float(input("Enter the c value for the quadratic equation: "))
+    quadEquation(a, b, c)
+    quadEquation2(a, b, c)
+    improvedQuadEquation(a, b, c)
 
 if __name__ == "__main__":
     main()
