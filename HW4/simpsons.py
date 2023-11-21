@@ -1,6 +1,3 @@
-def function(x):
-    return x**4 - 2*x + 1
-
 def simpsonsIntegrator(func, a, b, n ):
     h = (b - a) / n
     result = func(a) + func(b)
@@ -19,7 +16,7 @@ def main():
     a = 0
     b = 2
     n = 1000
-    print(simpsonsIntegrator(function, a, b, n))
+    print(simpsonsIntegrator(lambda x: (x**4 - 2*x + 1), a, b, n))
 
 if __name__ == "__main__":
     main()
