@@ -29,9 +29,6 @@ def main():
     plt.ylabel('Heat Capacity (J/K)')
     plt.title('Heat Capacity of a Solid')
     plt.show()
-    
-    #find maximum heat capacity
-    print('The maximum heat capacity is', np.max(C_v), 'J/K at', T[np.argmax(C_v)], 'K')
 
 if __name__ == "__main__":
     main()
