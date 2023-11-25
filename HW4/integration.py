@@ -33,15 +33,15 @@ def adaptiveTrapIntegral(f,a,b,epsilon):
     Returns the integral, the error, and the number of subintervals used.
     '''
     N = 1
-    integral_prev = trapIntegral(f,a,b,N)
+    integralPrev = trapIntegral(f,a,b,N)
     while True:
         N *= 2
-        integral_current = trapIntegral(f,a,b,N)
-        error = abs(integral_current - integral_prev) / 3.0
+        integralCurrent = trapIntegral(f,a,b,N)
+        error = abs(integralCurrent - integralPrev) / 3.0
         if error < epsilon:
-            return integral_current, error, N
+            return integralCurrent, error, N
         else:
-            integral_prev = integral_current
+            integralPrev = integralCurrent
 
 def adaptive_romberg_integration(f,a,b,epsilon):
     '''
@@ -55,29 +55,29 @@ def adaptive_romberg_integration(f,a,b,epsilon):
 
     Returns the integral, the error, and the number of rows used.
     '''
-    romberg_previous = []
-    romberg_current = []
+    rombergPrevious = []
+    rombergCurrent = []
     i = 1
 
     # Initialize the error to a value greater than epsilon for the first iteration
     error = epsilon + 1
     while True:
         #calculate the first entry of the current romberg row
-        romberg_current.append(trapIntegral(f,a,b,(2**i)))
+        rombergCurrent.append(trapIntegral(f,a,b,(2**i)))
         
         #calculate the rest of the entries of the current romberg row using the previous row
         for m in range(2, i+1):
-            romberg_current.append(romberg_current[m-1-1]+((romberg_current[m-1-1]-romberg_previous[m-1-1])/((4**(m-1))-1)))
+            rombergCurrent.append(rombergCurrent[m-1-1]+((rombergCurrent[m-1-1]-rombergPrevious[m-1-1])/((4**(m-1))-1)))
         
         if(i > 2):
-            error = abs((romberg_current[i-1-1]-romberg_previous[i-1-1]))/(4**(i-1)-1)
+            error = abs((rombergCurrent[i-1-1]-rombergPrevious[i-1-1]))/(4**(i-1)-1)
 
         if error < epsilon:
-            return romberg_current[i-1], error, i
+            return rombergCurrent[i-1], error, i
         else:
             i += 1
-            romberg_previous = romberg_current
-            romberg_current = []
+            rombergPrevious = rombergCurrent
+            rombergCurrent = []
 
 def main():
     f = lambda x: (np.sin(np.sqrt(100*x)))**2
