@@ -16,9 +16,13 @@ def plot_lattice(ax):
     ax.set_title('Sodium Chloride Crystal Lattice')
     plt.show()
 
-# Create a 3D plot
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+def main():
+    # Create a 3D plot
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
 
-# Plot the lattice
-plot_lattice(ax)
+    # Plot the lattice
+    plot_lattice(ax)
+
+if __name__ == "__main__":
+    main()
