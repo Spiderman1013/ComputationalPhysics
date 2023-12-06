@@ -23,8 +23,8 @@ def main():
     f = lambda r: G*M/r**2 - G*m/(R-r)**2 - w**2*r
     df = lambda r: -2*G*M/r**3 + 2*G*m/(R-r)**3 - w**2
 
-    r_real = newtons_method(f, df, r_guess, 1e-4, 100)
-    print("the distance from earth is",r_real,"meters")
+    r_real = newtons_method(f, df, r_guess, 1e-4, 10000)
+    print("the distance from earth is",f"{r_real:.2e}","meters")
     #define functions
 
 if __name__=="__main__":
