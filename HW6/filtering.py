@@ -18,7 +18,7 @@ def main():
     # Plot the data
     plt.plot(price)
     plt.plot(reconstructed_price)
-    plt.title("Fourier Graph of Sunspots")
+    plt.title("Dow Jones Industrial Average")
     plt.ylabel("Price")
     plt.show()
 
