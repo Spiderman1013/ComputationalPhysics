@@ -62,7 +62,7 @@ def main():
     omega2 = 0
 
     r_0 = np.array([theta1,omega1,theta2,omega2],float)
-    tpoints, doublePendPoints = fourthOrderRungeKutta(doublePendulum, 0, 10, 10e6, r_0)
+    tpoints, doublePendPoints = fourthOrderRungeKutta(doublePendulum, 0, 10, 1000, r_0)
     doublePendPoints = np.array(doublePendPoints)
 
     def totalEnergy(theta1,omega1,theta2,omega2):

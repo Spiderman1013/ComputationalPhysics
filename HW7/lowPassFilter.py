@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sounddevice as sd
 
 def fourthOrderRungeKutta(f, a, b, N, inital_condition):
     '''
