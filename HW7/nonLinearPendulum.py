@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import vpython as vp
 
 def fourthOrderRungeKutta(f, a, b, N, inital_condition):
     '''
@@ -57,12 +58,18 @@ def main():
 
     timeValues, resultValues = fourthOrderRungeKutta(pendl, 0, 10, 1000, r_0)
 
-    #plot theta vs time
-    plt.plot(timeValues, resultValues[0])
-    plt.xlabel("Time (s)")
-    plt.ylabel("Theta (rad)")
-    plt.title("Theta vs Time")
-    plt.show()
+    s = vp.sphere(pos=vp.vector(1,0,0),color=vp.color.red,radius=0.1,make_trail=True,interval=1,retain=10,trail_color=vp.color.green)
+    c = vp.cylinder(radius=0.01)
+
+    for theta in resultValues[0][::4]:
+        
+        vp.rate(30)
+        
+        # update positions
+        x = -np.cos(theta)
+        y = np.sin(theta)
+        s.pos = vp.vector(y, x, 0)
+        c.axis = vp.vector(y, x, 0)
 
 if __name__ == "__main__":
     main()
