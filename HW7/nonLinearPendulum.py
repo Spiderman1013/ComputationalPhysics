@@ -66,10 +66,10 @@ def main():
         vp.rate(30)
         
         # update positions
-        x = -np.cos(theta)
-        y = np.sin(theta)
-        s.pos = vp.vector(y, x, 0)
-        c.axis = vp.vector(y, x, 0)
+        x = np.sin(theta)
+        y = -np.cos(theta)
+        s.pos = vp.vector(x, y, 0)
+        c.axis = vp.vector(x, y, 0)
 
 if __name__ == "__main__":
     main()
