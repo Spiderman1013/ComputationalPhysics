@@ -24,7 +24,7 @@ def main():
             if i[0] < L - 1:
                 i[0] += 1
 
-        particle.set_data((i[0],), (j[0],))  # Convert to tuples to avoid MatplotlibDeprecationWarning
+        particle.set_data((i[0],), (j[0],)) 
         return particle,
 
     # Initialize the particle in the center of the lattice
@@ -34,10 +34,13 @@ def main():
     fig, ax = plt.subplots()
     ax.set_xlim(0, L)
     ax.set_ylim(0, L)
+    ax.set_title('Brownian Motion')
+    ax.set_xlabel('X Position') 
+    ax.set_ylabel('Y Position')
     particle, = ax.plot(i, j, 'bo')  # Initial position of the particle
 
     # Create an animation
-    ani = animation.FuncAnimation(fig, update, fargs=(i, j), frames=num_steps, interval=10, blit=True)
+    ani = animation.FuncAnimation(fig, update, fargs=(i, j), frames=num_steps, interval=1e-5, blit=True)
 
     # Display the animation
     plt.show()
