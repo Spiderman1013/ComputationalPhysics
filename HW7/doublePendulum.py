@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import vpython as vp
 
 def fourthOrderRungeKutta(f, a, b, N, inital_condition):
     '''
@@ -10,7 +11,7 @@ def fourthOrderRungeKutta(f, a, b, N, inital_condition):
         a: left endpoint of interval
         b: right endpoint of interval
         N: number of steps
-        inital_condition: N-Dimensional vector initial value of output at a 
+        inital_condition: N-Dimensional vector with inital value of all dependent variables
     '''
     h = (b-a)/N
     tpoints = np.arange(a, b, h)
@@ -24,7 +25,7 @@ def fourthOrderRungeKutta(f, a, b, N, inital_condition):
         r[i] = inital_condition[i]
 
     for t in tpoints:
-        for i in range(len(r)):
+        for i in range(len(result)):
             result[i].append(r[i])
         k1 = h*f(r, t)
         k2 = h*f(r + 0.5*k1, t + 0.5*h)
@@ -49,34 +50,92 @@ def main():
         omega1 = r[1]
         theta2 = r[2]
         omega2 = r[3]
+
+        delta = theta1 - theta2
         ftheta1 = omega1
-        fomega1 = (m*g*np.sin(theta2)*np.cos(theta1-theta2) - m*np.sin(theta1-theta2)*(l*omega1**2*np.cos(theta1-theta2) + l*omega2**2) - (m+m)*g*np.sin(theta1))/(l*(m+m*(np.sin(theta1-theta2))**2))
+        denom = 3 - np.cos(2*delta)
+        fomega1 = -(((omega1**2) * np.sin(2*delta)) + (2 * (omega2**2) * np.sin(delta)) + ((g/l)*(np.sin(theta1-(2*theta2))+(3*np.sin(theta1))))) / denom
         ftheta2 = omega2
-        fomega2 = ((m+m)*l*omega1**2*np.sin(theta1-theta2) + (m+m)*g*np.sin(theta2) + m*l*omega2**2*np.sin(theta1-theta2)*np.cos(theta1-theta2))/(l*(m+m*(np.sin(theta1-theta2))**2))
+        fomega2 = ((4*(omega1**2)*np.sin(delta)) + ((omega2**2)*np.sin(2*delta)) + (2*(g/l)*(np.sin(2*theta1-theta2)-np.sin(theta2)))) / denom
         return np.array([ftheta1,fomega1,ftheta2,fomega2],float)
     
     #inital conditions
-    theta1 = 90
-    theta2 = 90
+    theta1 = np.deg2rad(90)
+    theta2 = np.deg2rad(90)
     omega1 = 0
     omega2 = 0
 
     r_0 = np.array([theta1,omega1,theta2,omega2],float)
+    r_1 = np.array([theta1+0.1,omega1,theta2,omega2],float)
     tpoints, doublePendPoints = fourthOrderRungeKutta(doublePendulum, 0, 10, 1000, r_0)
+    tpoints, doublePendPoints2 = fourthOrderRungeKutta(doublePendulum, 0, 10, 1000, r_1)
     doublePendPoints = np.array(doublePendPoints)
 
-    def totalEnergy(theta1,omega1,theta2,omega2):
-        T = m*l**2*(omega1**2 + 0.5*omega2**2 + omega1*omega2*np.cos(theta1-theta2))
-        V = -m*g*l*(2*np.cos(theta1) + np.cos(theta2))
-        return T + V
-    
-    totalEnergyValues = totalEnergy(doublePendPoints[0],doublePendPoints[1],doublePendPoints[2],doublePendPoints[3])
+    def kineticEnergy(pendPoints):
+        theta1 = pendPoints[0]
+        omega1 = pendPoints[1]
+        theta2 = pendPoints[2]
+        omega2 = pendPoints[3]
 
-    plt.plot(tpoints,totalEnergyValues)
-    plt.xlabel("t")
-    plt.ylabel("Total Energy")
+        T = m*(l**2)*((omega1**2)+(0.5*(omega2**2))+(omega1*omega2*np.cos(theta1-theta2)))
+
+        return T
+
+    def potentialEnergy(pendPoints):
+        theta1 = pendPoints[0]
+        omega1 = pendPoints[1]
+        theta2 = pendPoints[2]
+        omega2 = pendPoints[3]
+
+        V = -m*g*l*(2*np.cos(theta1)+np.cos(theta2))
+        return V
+    
+    def totalEnergy(pendPoints):
+        T = kineticEnergy(pendPoints)
+        V = potentialEnergy(pendPoints)
+        E = T + V
+        return E
+
+    kineticEnergyPoints = kineticEnergy(doublePendPoints)
+    potentialEnergyPoints = potentialEnergy(doublePendPoints)
+    totalEnergyPoints = totalEnergy(doublePendPoints)
+
+    plt.plot(tpoints,kineticEnergyPoints,label="Kinetic Energy")
+    plt.plot(tpoints,potentialEnergyPoints,label="Potential Energy")
+    plt.plot(tpoints,totalEnergyPoints,label="Total Energy")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Total Energy (J)")
+    plt.title("Total Energy of the Double Pendulum")
+    plt.legend()
     plt.show()
 
+    # animate the double pendulum using vpython    
+    # set up pendulum components
+    top = vp.vector(0,0,0)
+    middle = vp.vector(0,-l,0)
+    bottom = vp.vector(0,-2*l,0)
+    rod1 = vp.cylinder(pos=top,axis=middle,radius=0.01)
+    rod2 = vp.cylinder(pos=middle,axis=middle,radius=0.01)
+    bob1 = vp.sphere(pos=middle,color=vp.color.red,radius=0.1)
+    bob2 = vp.sphere(pos=bottom,color=vp.color.red,radius=0.1,make_trail=True,interval=1,retain=10,trail_color=vp.color.green)
+
+    #animate the double pendulum
+    for theta1, omega1, theta2, omega2 in zip(doublePendPoints[0][::4], doublePendPoints[1][::4], doublePendPoints[2][::4], doublePendPoints[3][::4]):
+        vp.rate(24)
+        
+        # Calculate positions of the pendulum components
+        x1 = l * np.sin(theta1)
+        y1 = -l* np.cos(theta1)
+        x2 = x1 + (l * np.sin(theta2))
+        y2 = y1 - (l * np.cos(theta2))
+        
+        # Update positions of the bob and rods
+        bob1.pos = vp.vector(x1, y1, 0)
+        rod1.axis = vp.vector(x1, y1, 0)
+        rod2.pos = vp.vector(x1, y1, 0)
+        rod2.axis = vp.vector(x2-x1, y2-y1, 0)
+        bob2.pos = vp.vector(x2, y2, 0)
+                
 if __name__ == "__main__":
     main()
 

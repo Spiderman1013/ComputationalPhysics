@@ -48,15 +48,15 @@ def main():
     G = 6.67e-11 #m^3/(kg*s^2)
     M = 1.989e30 #kg
 
-    #define the position of a ball through air as four first order ODEs.
+    #define the position of a comet as four first order ODEs.
     #takes in x, xdot, y, ydot, (collectively as r) and t
-    #returns d(theta1)/dt, d(omega1)/dt, d(theta2)/dt, d(omega2)/dt
+    #returns d(x)/dt, d(xdot)/dt, d(y)/dt, d(ydot)/dt
     def trajectoryFromGravity(r,t):
         x = r[0]
         xdot = r[1]
         y = r[2]
         ydot = r[3]
-        rad = np.sqrt(x**2 + y**2)
+        rad = (x**2 + y**2)**0.5
         fx = xdot
         fxdot = -G*M*x / (rad**3)
         fy = ydot
@@ -70,7 +70,7 @@ def main():
     ydot_0 = 500 #m/s
     r_0 = np.array([x_0,xdot_0,y_0,ydot_0],float)
 
-    tpoints, trajectoryPoints = adaptiveFourthOrderRungeKutta(trajectoryFromGravity, 0, 10e12, 10e5, r_0, 1)
+    tpoints, trajectoryPoints = adaptiveFourthOrderRungeKutta(trajectoryFromGravity, 0, 10e12, 1000, r_0, 1)
 
     #plot x versus y to get the trajectory
     plt.plot(trajectoryPoints[0],trajectoryPoints[2])

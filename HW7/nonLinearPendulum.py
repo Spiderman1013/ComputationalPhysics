@@ -11,7 +11,7 @@ def fourthOrderRungeKutta(f, a, b, N, inital_condition):
         a: left endpoint of interval
         b: right endpoint of interval
         N: number of steps
-        inital_condition: N-Dimensional vector initial value of output at a 
+        inital_condition: N-Dimensional vector with inital value of all dependent variables
     '''
     h = (b-a)/N
     tpoints = np.arange(a, b, h)
@@ -25,7 +25,7 @@ def fourthOrderRungeKutta(f, a, b, N, inital_condition):
         r[i] = inital_condition[i]
 
     for t in tpoints:
-        for i in range(len(r)):
+        for i in range(len(result)):
             result[i].append(r[i])
         k1 = h*f(r, t)
         k2 = h*f(r + 0.5*k1, t + 0.5*h)
@@ -38,6 +38,7 @@ def fourthOrderRungeKutta(f, a, b, N, inital_condition):
 def main():
 
     # Constants for the pendulum
+    m = 1 # mass of the pendulum (kg)
     g = 9.81  # acceleration due to gravity (m/s^2)
     l = 1.0   # length of the pendulum (m)
 
@@ -52,18 +53,37 @@ def main():
         return np.array([ftheta,fomega],float)
     
     #inital values for pendulum
-    theta0 = 179 * np.pi / 180  # initial angle (in radians)
+    theta0 = np.deg2rad(179)   # initial angle (in radians)
     omega0 = 0.0  # initial angular velocity (rad/s)
     r_0 = np.array([theta0,omega0],float)
 
     timeValues, resultValues = fourthOrderRungeKutta(pendl, 0, 10, 1000, r_0)
+    resultValues = np.array(resultValues)
+
+    def kineticEnergy(resultValues):
+        omega =  resultValues[1]
+        L = m * l**2
+        return 0.5*L*(omega**2) 
+    
+    def potentialEnergy(resultValues):
+        theta =  resultValues[0]
+        return -m*g*l*np.cos(theta)
+    
+    KE = kineticEnergy(resultValues)
+    PE = potentialEnergy(resultValues)
+    plt.plot(timeValues,KE,label="Kinetic Energy")
+    plt.plot(timeValues,PE,label="Potential Energy")
+    plt.plot(timeValues,KE+PE,label="Total Energy")
+    plt.legend()
+    plt.show()
+
 
     s = vp.sphere(pos=vp.vector(1,0,0),color=vp.color.red,radius=0.1,make_trail=True,interval=1,retain=10,trail_color=vp.color.green)
     c = vp.cylinder(radius=0.01)
 
     for theta in resultValues[0][::4]:
         
-        vp.rate(30)
+        vp.rate(24)
         
         # update positions
         x = np.sin(theta)
