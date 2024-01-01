@@ -25,6 +25,7 @@ def main():
     Nx = N + 1  # Number of points to plot
     dx = L / N  # Distance between points
     dt = 10e-6  # Time step
+    K = 5 #scaling of y values to make it easier to see
 
     # Initial conditions
     x_values = np.linspace(0, L, Nx)
@@ -35,7 +36,9 @@ def main():
     phi = np.zeros(Nx)  # Placeholder for initial conditions of phi
 
     fig, ax = plt.subplots()
-    graph, = ax.plot(x_values, psi)
+    graph, = ax.plot(x_values, K*psi)
+    ax.set_xlabel("x (m)")
+    ax.set_ylabel("y (m)")
     ax.set_xlim(0, L)
     ax.set_ylim(-1, 1)
 
@@ -44,7 +47,7 @@ def main():
         nonlocal psi
         nonlocal phi
         psi, phi = eulerMethod(psi, phi, Nx, dx, dt, v)
-        graph.set_ydata(psi)
+        graph.set_ydata(K*psi)
         return graph,
 
     ani = FuncAnimation(fig, update, frames=range(10000), interval=0.001, blit=True)
