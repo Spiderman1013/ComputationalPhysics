@@ -1,5 +1,16 @@
 import math
 import numpy as np
+import time
+
+def time_it(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        elapsed_time = end_time - start_time
+        print(f"Function '{func.__name__}' took {elapsed_time:.4f} seconds to complete.")
+        return result
+    return wrapper
 
 def trapIntegral(f, a, b, n):
     '''
@@ -20,6 +31,7 @@ def trapIntegral(f, a, b, n):
     integral = h*(0.5*f(a)+0.5*f(b)+sum(f(x_values[1:n])))
     return integral
 
+@time_it
 def adaptiveTrapIntegral(f,a,b,epsilon):
     '''
     Finds the trapezoidal integral of f from a to b with an error less than epsilon.
@@ -43,6 +55,7 @@ def adaptiveTrapIntegral(f,a,b,epsilon):
         else:
             integralPrev = integralCurrent
 
+@time_it
 def adaptive_romberg_integration(f,a,b,epsilon):
     '''
     Finds the Romberg integral of f from a to b with an error less than epsilon.

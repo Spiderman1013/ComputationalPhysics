@@ -1,40 +1,68 @@
-import numpy as np
+import random
+import math
 import matplotlib.pyplot as plt
 
-def main():
-    # Parameters
-    L = 1.0       # Length of the domain
-    T = 1.0       # Total simulation time
-    Nx = 100      # Number of spatial points
-    Nt = 1000     # Number of time steps
-    c = 1.0       # Wave speed
-    dx = L / Nx   # Spatial step size
-    dt = T / Nt   # Time step size
+def euclidean_distance(x1, y1, x2, y2):
+    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
-    # Create arrays for the spatial and time coordinates
-    x = np.linspace(0, L, Nx)
-    t = np.linspace(0, T, Nt)
+def simulate_DLA(grid_size):
+    grid = [[0 for _ in range(grid_size)] for _ in range(grid_size)]
+    center = grid_size // 2
+    r = 0
 
-    # Initialize the wave function
-    u = np.zeros(Nx)
+    def is_within_bounds(x, y):
+        return 0 <= x < grid_size and 0 <= y < grid_size
 
-    # Initial conditions (e.g., Gaussian pulse)
-    u0 = np.exp(-100 * (x - 0.5 * L) ** 2)
+    def start_random_point_on_circle(radius):
+        angle = random.uniform(0, 2 * math.pi)
+        x = int(center + radius * math.cos(angle))
+        y = int(center + radius * math.sin(angle))
+        return x, y
 
-    # Set the initial condition
-    u = u0.copy()
+    while r < grid_size // 2:
+        x, y = start_random_point_on_circle(r + 1)
+        
+        while True:
+            directions = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+            random.shuffle(directions)
 
-    # FTCS time-stepping loop
-    for n in range(1, Nt):
-        u[1:Nx-1] = u[1:Nx-1] - c * dt / dx * (u[2:Nx] - u[0:Nx-2])
+            for dx, dy in directions:
+                new_x, new_y = x + dx, y + dy
+                if is_within_bounds(new_x, new_y) and grid[new_x][new_y] == 1:
+                    grid[x][y] = 1
+                    distance_to_center = euclidean_distance(center, center, x, y)
+                    if distance_to_center > r:
+                        r = distance_to_center
+                    break
+            else:
+                distance_from_center = euclidean_distance(center, center, x, y)
+                if distance_from_center > 2 * r:
+                    break
+                angle = random.uniform(0, 2 * math.pi)
+                x = int(center + (r + 1) * math.cos(angle))
+                y = int(center + (r + 1) * math.sin(angle))
 
-    # Plot the final wave profile
-    plt.plot(x, u)
-    plt.xlabel('Position')
-    plt.ylabel('Amplitude')
-    plt.title('1D Wave Equation (FTCS)')
+    return grid
+
+# Set grid size
+grid_size = 101
+
+# Run simulation
+resulting_grid = simulate_DLA(grid_size)
+
+def plot_DLA(grid):
+    plt.imshow(grid, cmap='Greys', interpolation='nearest')
+    plt.title('Diffusion-Limited Aggregation (DLA)')
+    plt.xlabel('X-axis')
+    plt.ylabel('Y-axis')
+    plt.colorbar(label='Aggregation')
     plt.show()
 
+# Set grid size
+grid_size = 101
 
-if __name__ == "__main__":
-    main()
+# Run simulation
+resulting_grid = simulate_DLA(grid_size)
+
+# Plot the resulting aggregation pattern
+plot_DLA(resulting_grid)

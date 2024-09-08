@@ -16,10 +16,11 @@ def main():
     reconstructed_price = np.fft.irfft(coeff)
 
     # Plot the data
-    plt.plot(price)
-    plt.plot(reconstructed_price)
+    plt.plot(price,label='Actual Data')
+    plt.plot(reconstructed_price,label='Moving Average')
     plt.title("Dow Jones Industrial Average")
     plt.ylabel("Price")
+    plt.legend()
     plt.show()
 
 if __name__ == "__main__":

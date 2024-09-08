@@ -24,6 +24,7 @@ def main():
 
     # Plot the data
     plt.plot(np.power(abs(c_k),2))
+    plt.plot(np.power(abs(np.fft.rfft(sunspots)),2))
     plt.title("Fourier Graph of Sunspots")
     plt.xlabel("K Value")
     plt.ylabel("|C_k|^2")
