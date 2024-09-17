@@ -101,6 +101,5 @@ def main():
     result2 = adaptive_romberg_integration(f,a,b,e)
     print("The integration result is",result[0],"with an error of",result[1],"using",result[2],"subintervals with the adaptive trapezoidal method.")
     print("The integration result is",result2[0],"with an error of",result2[1],"using",result2[2],"rows with adaptive Romberg integration.")
-
 if __name__ == "__main__":
     main()
